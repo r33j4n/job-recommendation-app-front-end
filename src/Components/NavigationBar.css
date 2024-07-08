@@ -11,6 +11,11 @@
     z-index: 1000;
   }
   
+  .navbar-logo {
+    position: absolute;
+    left: 20px;
+  }
+  
   .navbar-logo img {
     height: 40px;
   }
@@ -19,6 +24,7 @@
     list-style: none;
     display: flex;
     align-items: center;
+    justify-content: center;
   }
   
   .navbar-links li {
@@ -70,15 +76,42 @@
     .navbar {
       flex-direction: column;
       align-items: flex-start;
+      padding: 10px;
+    }
+  
+    .navbar-logo {
+      position: relative;
+      left: 0;
+      margin-bottom: 10px;
+    }
+  
+    .hamburger {
+      display: block;
+      cursor: pointer;
+      font-size: 24px;
+      color: #fff;
+      margin-left: auto;
     }
   
     .navbar-links {
       flex-direction: column;
       align-items: flex-start;
+      display: none;
+      width: 100%;
+    }
+  
+    .navbar-links.show {
+      display: flex;
     }
   
     .navbar-links li {
       margin: 10px 0;
+    }
+  }
+  
+  @media (min-width: 769px) {
+    .hamburger {
+      display: none;
     }
   }
   

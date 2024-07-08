@@ -2,12 +2,17 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import './LoginComponent.css';
-import  LoginImage from '../Resources/Images/LoginImage.png'; 
+import { useNavigate } from 'react-router-dom';
+import  LoginImage from '../Resources/Images/LoginImage.png';
+import { toast } from 'react-toastify';
+
 
 const LoginJobSeeker = () => {
   const [userName, setUserName] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
+  const navigate = useNavigate();
+
 
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -28,9 +33,20 @@ const LoginJobSeeker = () => {
         localStorage.setItem('userName', payload.userName);
         localStorage.setItem('role', payload.role);
         localStorage.setItem('loginSuccess',response.data.loginSuccess)
+        localStorage.setItem('roleId',payload.jobSeekerId)
 
         // Redirect or update app state here
-        console.log('Login successful');
+        toast.success('Login successful!', {
+          position: "top-right",
+          autoClose: 3000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+        });
+
+        // Redirect to job provider dashboard
+        navigate('/dashboard/jobseeker');
       } else {
         setError('Login failed. Please check your credentials.');
       }

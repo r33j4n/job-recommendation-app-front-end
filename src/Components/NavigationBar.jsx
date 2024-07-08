@@ -24,6 +24,7 @@ const NavBarComponent = () => {
     localStorage.removeItem('userName');
     localStorage.removeItem('role');
     localStorage.setItem('loginSuccess', 'false');
+    localStorage.removeItem('roleId')
     setLoginStatus(false);
     navigate('/home');
   };
@@ -31,7 +32,7 @@ const NavBarComponent = () => {
   return (
     <nav className="navbar">
       <div className="navbar-logo">
-        <img src={LogoImage} alt="Logo" />
+        {/* <img src={LogoImage} alt="Logo" /> */}
       </div>
       <ul className="navbar-links">
         <li>
@@ -51,7 +52,8 @@ const NavBarComponent = () => {
           {loginStatus ? (
             <span onClick={handleLogout} className="login-logout">Logout</span>
           ) : (
-            <Link to="/login" className="login-logout">Login</Link>
+            // <Link to="/login" className="login-logout">Login</Link>
+            <a href='#join' className='page-scroll'>Login </a>
           )}
         </li>
       </ul>

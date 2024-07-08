@@ -1,13 +1,16 @@
 // LoginComponent.js
 import React, { useState } from 'react';
 import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
+import { toast } from 'react-toastify';
 import './LoginComponent.css';
-import  LoginImage from '../Resources/Images/LoginImage.png'; 
+import LoginImage from '../Resources/Images/LoginImage.png';
 
 const LoginJobProvider = () => {
   const [userName, setUserName] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
+  const navigate = useNavigate();
 
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -27,10 +30,21 @@ const LoginJobProvider = () => {
         const payload = JSON.parse(atob(token.split('.')[1]));
         localStorage.setItem('userName', payload.userName);
         localStorage.setItem('role', payload.role);
-        localStorage.setItem('loginSuccess',response.data.loginSuccess)
+        localStorage.setItem('loginSuccess', 'true');
+        localStorage.setItem('roleId',payload.jobProviderId)
 
-        // Redirect or update app state here
-        console.log('Login successful');
+        // Show success toast
+        toast.success('Login successful!', {
+          position: "top-right",
+          autoClose: 3000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+        });
+
+        // Redirect to job provider dashboard
+        navigate('/dashboard/jobprovider');
       } else {
         setError('Login failed. Please check your credentials.');
       }
@@ -43,7 +57,6 @@ const LoginJobProvider = () => {
   return (
     <div className="login-container">
       <div className="login-image">
-        
         <img src={LoginImage} alt="Login illustration" />
       </div>
       <div className="login-form">
