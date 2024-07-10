@@ -1,10 +1,44 @@
 // SidebarComponent.jsx
-import React from 'react';
-import { NavLink } from 'react-router-dom';
+import React, { useState } from 'react';
+import { NavLink, useNavigate } from 'react-router-dom';
+import axios from 'axios';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import './Sidebar.css';
 import { FaHome, FaTachometerAlt, FaBriefcase, FaClipboardList, FaSearch, FaUser, FaTrashAlt, FaSignOutAlt } from 'react-icons/fa';
 
 const SidebarComponent = () => {
+    const roleid = localStorage.getItem('roleId');
+  const [showPopup, setShowPopup] = useState(false);
+  const navigate = useNavigate();
+
+  const handleDeleteClick = (e) => {
+    e.preventDefault();
+    setShowPopup(true);
+  };
+
+  const handleCancelDelete = () => {
+    setShowPopup(false);
+  };
+
+  const handleConfirmDelete = async () => {
+    try {
+      await axios.delete(`http://localhost:8081/jobseeker/delete/${roleid}`);
+      toast.success('Account deleted successfully');
+      setShowPopup(false);
+      // Redirect to home page or login page after successful deletion
+      localStorage.removeItem('token');
+      localStorage.removeItem('userName');
+      localStorage.removeItem('role');
+      localStorage.setItem('loginSuccess', 'false');
+      localStorage.removeItem('roleId');
+      navigate('/home');
+    } catch (error) {
+      console.error('Error deleting account:', error);
+      toast.error('Failed to delete account. Please try again.');
+    }
+  };
+
   return (
     <div className="sidebar">
       <NavLink to="/home" className="sidebar-item" activeClassName="active">
@@ -31,7 +65,7 @@ const SidebarComponent = () => {
         <FaUser className="sidebar-icon" />
         Profile Details
       </NavLink>
-      <NavLink to="/delete-account" className="sidebar-item" activeClassName="active">
+      <NavLink to="#" className="sidebar-item1" onClick={handleDeleteClick}>
         <FaTrashAlt className="sidebar-icon" />
         Delete Account
       </NavLink>
@@ -39,6 +73,20 @@ const SidebarComponent = () => {
         <FaSignOutAlt className="sidebar-icon" />
         Logout
       </NavLink>
+
+      {showPopup && (
+        <div className="popup-overlay">
+          <div className="popup">
+            <p>Are you sure you want to delete account?</p>
+            <div className="popup-buttons">
+              <button className="cancel-btn" onClick={handleCancelDelete}>Cancel</button>
+              <button className="confirm-btn" onClick={handleConfirmDelete}>DELETE</button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      <ToastContainer position="top-right" autoClose={3000} />
     </div>
   );
 };

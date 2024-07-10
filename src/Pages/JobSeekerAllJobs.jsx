@@ -1,6 +1,7 @@
 import React from "react";
 import SidebarComponent from "../Components/DashBoardComponentsJobSeeker/SideBar.jsx"
 import "./JobSeekerDashboard.css"
+import AllJobs from "../Components/DashBoardComponentsJobSeeker/AllJobs.jsx";
 const JobSeekerAllJobs = () => {
     return (
         <div className="layout">
@@ -11,6 +12,7 @@ const JobSeekerAllJobs = () => {
           </div>
           <div className="content">
             <h2>All Jobs Section</h2>
+            <AllJobs/>
             {/* Add main content here */}
           </div>
         </div>
