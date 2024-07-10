@@ -16,7 +16,7 @@ const RoleSelectionComponent = () => {
   };
 
   return (
-    <div className="role-selection-container">
+    <div className="role-selection-container" id='join'>
       <h1>Welcome to AI-based Job Recommendation System</h1>
       <p>Choose how you'd like to use our platform:</p>
 

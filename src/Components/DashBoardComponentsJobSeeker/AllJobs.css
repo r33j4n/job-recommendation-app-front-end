@@ -1,0 +1,97 @@
+.all-jobs {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    padding: 20px;
+  }
+
+  .job-card {
+    background-color: #fff;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 20px;
+    width: calc(50% - 10px); /* 50% width minus half of the gap */
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    box-sizing: border-box; /* Include padding in width calculation */
+  }
+  
+  /* Rest of the CSS remains the same */
+  
+  @media (max-width: 768px) {
+    .job-card {
+      width: 100%; /* Full width on smaller screens */
+    }
+  }
+  
+  .job-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+  }
+  
+  .job-header h2 {
+    margin: 0;
+    font-size: 1.5em;
+  }
+  
+  .status {
+    padding: 5px 10px;
+    border-radius: 20px;
+    font-size: 0.8em;
+    font-weight: bold;
+  }
+  
+  .hired {
+    background-color: #ff4444;
+    color: white;
+  }
+  
+  .not-hired {
+    background-color: #4CAF50;
+    color: white;
+  }
+  
+  .job-details p {
+    margin: 5px 0;
+  }
+  
+  .job-skills {
+    margin-top: 15px;
+  }
+  
+  .skill {
+    background-color: #f0f0f0;
+    padding: 5px 10px;
+    border-radius: 15px;
+    margin-right: 10px;
+    margin-bottom: 10px;
+    display: inline-block;
+    font-size: 0.9em;
+  }
+  
+  .apply-button {
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-top: 15px;
+    font-size: 1em;
+  }
+  
+  .apply-button:disabled {
+    background-color: #cccccc;
+    cursor: not-allowed;
+  }
+  
+  .applied {
+    background-color: #cccccc;
+  }
+  
+  @media (max-width: 768px) {
+    .job-card {
+      width: 100%;
+    }
+  }

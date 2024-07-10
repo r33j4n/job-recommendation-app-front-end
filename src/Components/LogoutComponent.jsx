@@ -10,6 +10,7 @@ const Logout = () => {
         localStorage.removeItem('token');
         localStorage.removeItem('userName');
         localStorage.removeItem('role');
+        localStorage.removeItem('roleId');
         localStorage.setItem('loginSuccess', 'false');
 
         // Show success toast
