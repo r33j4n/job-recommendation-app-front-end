@@ -10,6 +10,9 @@ import JobSeekerAllJobs from "../Pages/JobSeekerAllJobs";
 import JobSeekerAppliedJobs from "../Pages/JobSeekerAppliedJobs";
 import JobSeekerFindJobs from "../Pages/JobSeekerFindJobs";
 import JobSeekerProfileDetails from "../Pages/JobSeekerProfileDetails";
+import ResumeUpload from "../Components/DashBoardComponentsJobSeeker/UploadCV";
+import UploadCVPage from "../Pages/JonSeekerUploadCV";
+import ChatPageJobSeeker from "../Pages/JobSeekerChat";
 const router = createBrowserRouter([
   { path: "/", element: <HomePage /> },
   { path: "/home", element: <HomePage /> },
@@ -25,6 +28,8 @@ const router = createBrowserRouter([
   { path:"/profiledetails/jobseeker" ,element:<JobSeekerProfileDetails/> },
 
   { path:"/dashboard/jobprovider" ,element:<JobProviderDashBoardPage/> } ,
+  {path:"/resumeupload/jobseeker",element:<UploadCVPage/>},
+  {path:"/chat/jobseeker",element:<ChatPageJobSeeker/>}
 
 
 ]);

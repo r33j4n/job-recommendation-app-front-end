@@ -1,9 +1,8 @@
-import React from "react";
-import SidebarComponent from "../Components/DashBoardComponentsJobSeeker/SideBar.jsx"
-import "./JobSeekerDashboard.css"
-import ProfileDetails from "../Components/DashBoardComponentsJobSeeker/ProfileDetails.jsx";
-const JobSeekerProfileDetails = () => {
-    return (
+import React from 'react';
+import ResumeUpload from '../Components/DashBoardComponentsJobSeeker/UploadCV';
+import SidebarComponent from '../Components/DashBoardComponentsJobSeeker/SideBar';
+const UploadCVPage = () => {
+    return ( 
         <div className="layout">
           <div className="sidebar">
             <h2>Quick Access</h2>
@@ -13,11 +12,11 @@ const JobSeekerProfileDetails = () => {
           <div className="content">
             {/* <h2>Profile Details Section</h2> */}
             {/* <Navbar/> */}
-            <ProfileDetails/>
+            <ResumeUpload/>
             {/* Add main content here */}
           </div>
         </div>
       );
-};
-
-export default JobSeekerProfileDetails;
+}
+ 
+export default UploadCVPage;
