@@ -5,10 +5,11 @@ import './AllJobs.css';
 const AllJobs = () => {
   const [jobs, setJobs] = useState([]);
   const [applications, setApplications] = useState([]);
+  const roleid = localStorage.getItem("roleId");
 
   useEffect(() => {
     fetchJobs();
-    fetchApplications();
+    // fetchApplications();
   }, []);
 
   const fetchJobs = async () => {
@@ -22,7 +23,7 @@ const AllJobs = () => {
 
   const fetchApplications = async () => {
     try {
-      const response = await axios.get('http://localhost:8081/application/all');
+      const response = await axios.get(`http://localhost:8081/application/${roleid}`);
       setApplications(response.data);
     } catch (error) {
       console.error('Error fetching applications:', error);
@@ -39,7 +40,7 @@ const AllJobs = () => {
       await axios.post('http://localhost:8081/application/create', {
         applicationStatus: true,
         jobAppliedDate: new Date().toISOString(),
-        jobSeekerId: 1, // Assuming this is the current user's ID
+        jobSeekerId: roleid, 
         jobId: jobId
       });
       // Refetch applications to update the state

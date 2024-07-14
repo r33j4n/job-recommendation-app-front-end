@@ -4,11 +4,12 @@ import './AppliedJobs.css';
 
 const AppliedJobs = () => {
   const [jobs, setJobs] = useState([]);
+  const roleid = localStorage.getItem("roleId");
 
   useEffect(() => {
     const fetchJobs = async () => {
       try {
-        const response = await axios.get('http://localhost:8081/application/jobs/1');
+        const response = await axios.get(`http://localhost:8081/application/jobs/${roleid}`);
         setJobs(response.data);
       } catch (error) {
         console.error('Error fetching jobs:', error);

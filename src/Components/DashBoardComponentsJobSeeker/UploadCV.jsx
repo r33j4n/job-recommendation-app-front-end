@@ -1,7 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, useCallback } from 'react';
 import axios from 'axios';
 import { toast } from 'react-toastify';
 import { Document, Page, pdfjs } from 'react-pdf';
+import { useDropzone } from 'react-dropzone';
 import './UploadCV.css';
 
 // Set up the worker for PDF.js
@@ -20,8 +21,21 @@ const ResumeUpload = () => {
   const [updating, setUpdating] = useState(false);
   const roleid = localStorage.getItem('roleId');
 
-  const handleFileChange = (e) => {
-    const selectedFile = e.target.files[0];
+  const onDrop = useCallback((acceptedFiles) => {
+    const selectedFile = acceptedFiles[0];
+    handleFileSelection(selectedFile);
+  }, []);
+
+  const { getRootProps, getInputProps, isDragActive } = useDropzone({
+    onDrop,
+    accept: {
+      'application/pdf': ['.pdf'],
+      'application/vnd.openxmlformats-officedocument.wordprocessingml.document': ['.docx']
+    },
+    multiple: false
+  });
+
+  const handleFileSelection = (selectedFile) => {
     const fileType = selectedFile.type;
     if (fileType === "application/pdf" || fileType === "application/vnd.openxmlformats-officedocument.wordprocessingml.document") {
       setFile(selectedFile);
@@ -128,16 +142,14 @@ const ResumeUpload = () => {
       <h2>Upload Resume</h2>
       <form onSubmit={handleSubmit}>
         <div className="form-group">
-          <label htmlFor="resume">Select Resume (PDF or DOCX)</label>
-          <div className="file-input-wrapper">
-            <input
-              type="file"
-              id="resume"
-              accept=".pdf,.docx"
-              onChange={handleFileChange}
-              className="file-input"
-            />
-            <span className="file-name">{fileName || 'No file chosen'}</span>
+          <div {...getRootProps()} className={`dropzone ${isDragActive ? 'active' : ''}`}>
+            <input {...getInputProps()} />
+            {
+              isDragActive ?
+                <p>Drop the files here ...</p> :
+                <p>Drag and drop your resume here, or click to select files</p>
+            }
+            {fileName && <p className="file-name">Selected file: {fileName}</p>}
           </div>
         </div>
         <div className="button-group">

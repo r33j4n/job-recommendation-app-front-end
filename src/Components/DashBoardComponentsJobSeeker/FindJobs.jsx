@@ -1,11 +1,10 @@
-// FindJob.jsx
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import "./FindJobs.css";
 
-const JobCard = ({ job, applications, onApplicationSubmit }) => {
+const JobCard = ({ job, applications, onApplicationSubmit, highChance }) => {
   const [isApplied, setIsApplied] = useState(false);
 
   useEffect(() => {
@@ -19,8 +18,8 @@ const JobCard = ({ job, applications, onApplicationSubmit }) => {
         "http://localhost:8081/application/create",
         {
           applicationStatus: true,
-          jobAppliedDate: new Date().toISOString().split("T")[0], // Current date in YYYY-MM-DD format
-          jobSeekerId: 1, // Assuming the jobSeekerId is 1, you might want to get this dynamically
+          jobAppliedDate: new Date().toISOString().split("T")[0],
+          jobSeekerId: 1,
           jobId: job.jobId,
         }
       );
@@ -37,7 +36,7 @@ const JobCard = ({ job, applications, onApplicationSubmit }) => {
   };
 
   return (
-    <div className="job-card">
+    <div className={`job-card ${highChance ? "high-chance" : "low-chance"}`}>
       <div className="job-header">
         <h2>{job.jobTitle}</h2>
         <span className="status1">Not Hired</span>
@@ -78,22 +77,20 @@ const JobCard = ({ job, applications, onApplicationSubmit }) => {
 
 const FindJob = () => {
   const roleid = localStorage.getItem("roleId");
-  const [jobs, setJobs] = useState([]);
+  const [highChanceJobs, setHighChanceJobs] = useState([]);
+  const [lowChanceJobs, setLowChanceJobs] = useState([]);
   const [applications, setApplications] = useState([]);
-  const [skills, setSkills] = useState([]);
-  const [response, setResponse] = useState(null);
-  const [showResults, setShowResults] = useState(false);
+  const [skills, setSkills] = useState({});
   const [error, setError] = useState(null);
-
-  const jobIds = [1, 2, 3, 10, 15, 20, 25];
+  const [showResults, setShowResults] = useState(false);
 
   useEffect(() => {
     fetchApplications();
   }, []);
 
-  const fetchJobs = async () => {
+  const fetchJobs = async (ids, setJobs) => {
     const fetchedJobs = await Promise.all(
-      jobIds.map(async (id) => {
+      ids.map(async (id) => {
         try {
           const response = await axios.get(
             `http://localhost:8081/job/getJobById/${id}`
@@ -117,71 +114,57 @@ const FindJob = () => {
     }
   };
 
-  const fetchSkills = async () => {
+  const fetchSkillsAndJobs = async () => {
     try {
-      // Fetching data from the GET endpoint
       const getSkillsResponse = await axios.get(
         `http://localhost:8081/jobseeker/getSkills/${roleid}`
       );
-      setSkills(getSkillsResponse.data);
+      const fetchedSkills = getSkillsResponse.data;
+      setSkills(fetchedSkills);
+
+      const requestData = {
+        question: fetchedSkills.skills
+      };
+
+      const [lowResponse, highResponse] = await Promise.all([
+        axios.post("http://127.0.0.1:5000/chat", requestData),
+        axios.post("http://127.0.0.1:5000/chat_high", requestData),
+      ]);
+
+      const parseJobIds = (resultString) =>
+        resultString
+          .replace(/\(|\)|\[|\]/g, "")
+          .split(",")
+          .map(Number);
+
+      const lowJobIds = parseJobIds(lowResponse.data.result);
+      const highJobIds = parseJobIds(highResponse.data.result);
+
+      fetchJobs(lowJobIds, setLowChanceJobs);
+      fetchJobs(highJobIds, setHighChanceJobs);
+
+      setShowResults(true);
     } catch (err) {
       setError(err.message);
-      console.error("Error fetching Skills:", err);
+      console.error("Error fetching Skills and Jobs:", err);
     }
-  };
-
-  const SendSkills = async () => {
-    try {
-      const searchJobsResponse = await axios.post(
-        "http://localhost:8081/searchjobs",
-        skills
-      );
-      setResponse(searchJobsResponse.data);
-    } catch (err) {
-      setError(err.message);
-      console.error("Error fetching Skills:", error);
-    }
-  };
-
-  const handleShowResults = () => {
-    fetchJobs();
-    setShowResults(true);
-  };
-
-  const handleSearchResults = () => {
-    SendSkills();
-    // setShowResults(true);
-  };
-
-  const handleFindJobs = () => {
-    fetchSkills();
-    // setShowResults(true);
   };
 
   const handleApplicationSubmit = () => {
-    fetchApplications(); // Refresh the applications list
+    fetchApplications();
   };
 
   return (
     <div className="find-job-container">
       <div className="button-container">
-        <button className="find-button" onClick={handleFindJobs}>
+        <button className="find-button" onClick={fetchSkillsAndJobs}>
           Find Jobs
-        </button>
-      </div>
-      <div className="button-container">
-        <button className="find-button" onClick={handleSearchResults}>
-          Search Jobs
-        </button>
-      </div>
-      <div className="button-container">
-        <button className="show-results-button" onClick={handleShowResults}>
-          Show Results
         </button>
       </div>
       {showResults && (
         <div className="job-results">
-          {jobs.reduce((rows, job, index) => {
+          <h2>High Chances</h2>
+          {highChanceJobs.reduce((rows, job, index) => {
             if (index % 2 === 0) {
               rows.push(
                 <div className="job-row" key={job.jobId}>
@@ -189,12 +172,38 @@ const FindJob = () => {
                     job={job}
                     applications={applications}
                     onApplicationSubmit={handleApplicationSubmit}
+                    highChance={true}
                   />
-                  {jobs[index + 1] && (
+                  {highChanceJobs[index + 1] && (
                     <JobCard
-                      job={jobs[index + 1]}
+                      job={highChanceJobs[index + 1]}
                       applications={applications}
                       onApplicationSubmit={handleApplicationSubmit}
+                      highChance={true}
+                    />
+                  )}
+                </div>
+              );
+            }
+            return rows;
+          }, [])}
+          <h2>Low Chances</h2>
+          {lowChanceJobs.reduce((rows, job, index) => {
+            if (index % 2 === 0) {
+              rows.push(
+                <div className="job-row" key={job.jobId}>
+                  <JobCard
+                    job={job}
+                    applications={applications}
+                    onApplicationSubmit={handleApplicationSubmit}
+                    highChance={false}
+                  />
+                  {lowChanceJobs[index + 1] && (
+                    <JobCard
+                      job={lowChanceJobs[index + 1]}
+                      applications={applications}
+                      onApplicationSubmit={handleApplicationSubmit}
+                      highChance={false}
                     />
                   )}
                 </div>

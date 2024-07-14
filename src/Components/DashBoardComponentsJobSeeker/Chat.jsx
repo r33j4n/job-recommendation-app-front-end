@@ -5,6 +5,18 @@ import './ChatInterface.css';
 const ChatInterface = () => {
   const [inputText, setInputText] = useState('');
   const [chatMessages, setChatMessages] = useState([]);
+  const [details, setDetails] = useState(null);
+
+  const fetchDetails = async (roleId) => {
+    try {
+      const response = await axios.get(`http://localhost:8081/jobseeker/get/${roleId}`);
+      setDetails(response.data);
+      return response.data;
+    } catch (error) {
+      console.error('Error fetching details:', error);
+      return null;
+    }
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -13,8 +25,15 @@ const ChatInterface = () => {
     const newMessage = { type: 'user', content: inputText };
     setChatMessages(prev => [...prev, newMessage]);
 
+    const roleId = localStorage.getItem('roleId');
+    let detailsData = details;
+
+    if (!detailsData && roleId) {
+      detailsData = await fetchDetails(roleId);
+    }
+
     try {
-      const response = await axios.post('http://127.0.0.1:5000/chat', { question: inputText });
+      const response = await axios.post('http://127.0.0.1:5000/chat_ui', { question: inputText, details: detailsData });
       console.log('Response:', response.data);
       const botMessage = { type: 'bot', content: response.data.result };
       setChatMessages(prev => [...prev, botMessage]);
