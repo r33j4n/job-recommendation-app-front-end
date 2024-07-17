@@ -1,32 +1,36 @@
-import React, { useState, useEffect } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
-import './NavigationBar.css';
-import LogoImage from '../Resources/Images/logo.jpg';
+import React, { useState, useEffect } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import "./NavigationBar.css";
+import LogoImage from "../Resources/Images/logo.jpg";
 
 const NavBarComponent = () => {
-  const [loginStatus, setLoginStatus] = useState(localStorage.getItem('loginSuccess') === 'true');
+  const loginstatus = localStorage.getItem("loginSuccess");
+
+  const [loginStatus, setLoginStatus] = useState(
+    localStorage.getItem("loginSuccess") === "true"
+  );
   const navigate = useNavigate();
 
   useEffect(() => {
     const handleStorageChange = () => {
-      setLoginStatus(localStorage.getItem('loginSuccess') === 'true');
+      setLoginStatus(localStorage.getItem("loginSuccess") === "true");
     };
 
-    window.addEventListener('storage', handleStorageChange);
+    window.addEventListener("storage", handleStorageChange);
 
     return () => {
-      window.removeEventListener('storage', handleStorageChange);
+      window.removeEventListener("storage", handleStorageChange);
     };
   }, []);
 
   const handleLogout = () => {
-    localStorage.removeItem('token');
-    localStorage.removeItem('userName');
-    localStorage.removeItem('role');
-    localStorage.setItem('loginSuccess', 'false');
-    localStorage.removeItem('roleId')
+    localStorage.removeItem("token");
+    localStorage.removeItem("userName");
+    localStorage.removeItem("role");
+    localStorage.setItem("loginSuccess", "false");
+    localStorage.removeItem("roleId");
     setLoginStatus(false);
-    navigate('/home');
+    navigate("/home");
   };
 
   return (
@@ -44,16 +48,24 @@ const NavBarComponent = () => {
         <li className="navbar-dropdown">
           <span>Dashboard</span>
           <div className="dropdown-content">
-            <Link to="/dashboard/jobseeker">Jobseeker Dashboard</Link>
-            <Link to="/dashboard/jobprovider">Job Provider Dashboard</Link>
+            <Link to={loginStatus ? "/alljobs/jobseeker" : "/login/jobSeeker"}>
+              Job Seeker Dashboard
+            </Link>
+            <Link to={loginStatus ? "/postedjobs/jobprovider" : "/login/jobProvider"}>
+              Job Provider Dashboard
+            </Link>
           </div>
         </li>
         <li>
           {loginStatus ? (
-            <span onClick={handleLogout} className="login-logout">Logout</span>
+            <span onClick={handleLogout} className="login-logout">
+              Logout
+            </span>
           ) : (
             // <Link to="/login" className="login-logout">Login</Link>
-            <a href='#join' className='page-scroll'>Login </a>
+            <a href="#join" className="page-scroll">
+              Login{" "}
+            </a>
           )}
         </li>
       </ul>
