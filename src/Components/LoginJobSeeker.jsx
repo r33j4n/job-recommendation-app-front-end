@@ -110,8 +110,8 @@ const LoginJobSeeker = () => {
             />
           </div>
           <div className="form-group">
-            <p className="forgot-password" onClick={handleForgotPassword}>Forgot Password</p>
-            {/* <button type="button" className="forgot-password1" onClick={handleForgotPassword}>Forgot Password</button> */}
+            {/* <p className="forgot-password" onClick={handleForgotPassword}>Forgot Password</p> */}
+            <button type="button" className="forgot-password1" onClick={handleForgotPassword}>Forgot Password</button>
           </div>
           {successMessage && <p className="success-message">{successMessage}</p>}
           {error && <p className="error-message">{error}</p>}
