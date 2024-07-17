@@ -19,6 +19,8 @@ import JobProviderProfileDetails from "../Pages/JobProviderProfileDetails";
 import SignUpJobProviderComponent from "../Components/SignupJobProvider";
 import SignupJobProvider from "../Pages/SignupPageJobProvider";
 import JobProviderEditJobs from "../Pages/JobProviderEditJob";
+import ResetPasswordJobSeeker from "../Pages/ResetPasswordJobSeeker";
+import ResetPasswordJobProvider from "../Pages/ResetPasswordJobProvider";
 
 const router = createBrowserRouter([
   { path: "/", element: <HomePage /> },
@@ -43,6 +45,13 @@ const router = createBrowserRouter([
   { path:"/profiledetails/jobprovider" ,element:<JobProviderProfileDetails/> } ,
   { path:"/editjobs/jobprovider/:jobId" ,element:<JobProviderEditJobs/> } ,
   { path: "/signup/jobProvider", element: <SignupJobProvider /> },
+
+  { path: "/resetpassword/jobSeeker", element: <ResetPasswordJobSeeker /> },
+  { path: "/resetpassword/jobProvider", element: <ResetPasswordJobProvider /> },
+
+
+
+
   
 
 

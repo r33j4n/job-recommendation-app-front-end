@@ -15,10 +15,11 @@ const ResumeUpload = () => {
   const [file, setFile] = useState(null);
   const [fileName, setFileName] = useState('');
   const [uploading, setUploading] = useState(false);
-  const [pdfUrl, setPdfUrl] = useState(null);
+  const [fileUrl, setFileUrl] = useState(null);
   const [numPages, setNumPages] = useState(null);
   const [pageNumber, setPageNumber] = useState(1);
   const [updating, setUpdating] = useState(false);
+  const [fileType, setFileType] = useState(null);
   const roleid = localStorage.getItem('roleId');
 
   const onDrop = useCallback((acceptedFiles) => {
@@ -30,23 +31,25 @@ const ResumeUpload = () => {
     onDrop,
     accept: {
       'application/pdf': ['.pdf'],
-      'application/vnd.openxmlformats-officedocument.wordprocessingml.document': ['.docx']
+      'application/vnd.openxmlformats-officedocument.wordprocessingml.document': ['.docx'],
+      'application/msword': ['.doc'],
+      'image/*': ['.jpeg', '.jpg', '.png', '.gif']
     },
     multiple: false
   });
 
   const handleFileSelection = (selectedFile) => {
-    const fileType = selectedFile.type;
-    if (fileType === "application/pdf" || fileType === "application/vnd.openxmlformats-officedocument.wordprocessingml.document") {
+    const type = selectedFile.type;
+    if (type.startsWith('application/pdf') || 
+        type === 'application/vnd.openxmlformats-officedocument.wordprocessingml.document' ||
+        type === 'application/msword' ||
+        type.startsWith('image/')) {
       setFile(selectedFile);
       setFileName(selectedFile.name);
-      if (fileType === "application/pdf") {
-        setPdfUrl(URL.createObjectURL(selectedFile));
-      } else {
-        setPdfUrl(null);
-      }
+      setFileUrl(URL.createObjectURL(selectedFile));
+      setFileType(type);
     } else {
-      toast.error('Please select a PDF or DOCX file');
+      toast.error('Please select a PDF, DOC, DOCX, or image file');
     }
   };
 
@@ -73,13 +76,14 @@ const ResumeUpload = () => {
         }
       });
       if (response.status === 200) {
-        toast.success(response.data.db_message || 'Resume uploaded successfully!');
+        toast.success(response.data.db_message || 'File uploaded successfully!');
+        
       } else {
         throw new Error(response.data.error || 'Failed to upload file');
       }
     } catch (error) {
-      console.error('Error uploading resume:', error);
-      toast.error(error.message || 'Failed to upload resume. Please try again.');
+      console.error('Error uploading file:', error);
+      toast.error(error.message || 'Failed to upload file. Please try again.');
     } finally {
       setUploading(false);
     }
@@ -88,7 +92,8 @@ const ResumeUpload = () => {
   const handleCancel = () => {
     setFile(null);
     setFileName('');
-    setPdfUrl(null);
+    setFileUrl(null);
+    setFileType(null);
   };
 
   const onDocumentLoadSuccess = ({ numPages }) => {
@@ -97,44 +102,7 @@ const ResumeUpload = () => {
   };
 
   const handleUpdateData = async () => {
-    if (!roleid) {
-      toast.error('User not logged in');
-      return;
-    }
-
-    setUpdating(true);
-    try {
-      // Call Flask API to get the data
-      const flaskResponse = await axios.post('http://127.0.0.1:5000/query-cv', { userID: roleid });
-      
-      if (flaskResponse.status === 200) {
-        const { experience, skills, education } = flaskResponse.data.response;
-
-        // Transform data to match Spring Boot requirements
-        const springBootData = {
-          education: education.length > 0 ? education[0].Degree : '',
-          experience: experience.Details.map(detail => `${detail.Role ? detail.Role : ''} ${detail.CompanyName ? `at ${detail.CompanyName}` : ''} ${detail.Duration ? `(${detail.Duration})` : ''}`).join(', '),
-          skills: skills.join(', ')
-        };
-        console.log('Spring Boot data:', springBootData);
-
-        // Call Spring Boot API to update the data
-        const springBootResponse = await axios.put(`http://127.0.0.1:8081/jobseeker/update_skills/${roleid}`, springBootData);
-
-        if (springBootResponse.status === 200) {
-          toast.success('Profile updated successfully!');
-        } else {
-          throw new Error('Failed to update profile in Spring Boot');
-        }
-      } else {
-        throw new Error('Failed to get data from Flask API');
-      }
-    } catch (error) {
-      console.error('Error updating data:', error);
-      toast.error(error.message || 'Failed to update data. Please try again.');
-    } finally {
-      setUpdating(false);
-    }
+    // ... (keep the existing handleUpdateData function)
   };
 
   return (
@@ -147,7 +115,7 @@ const ResumeUpload = () => {
             {
               isDragActive ?
                 <p>Drop the files here ...</p> :
-                <p>Drag and drop your resume here, or click to select files</p>
+                <p>Drag and drop your resume or image here, or click to select files</p>
             }
             {fileName && <p className="file-name">Selected file: {fileName}</p>}
           </div>
@@ -163,31 +131,41 @@ const ResumeUpload = () => {
         </div>
       </form>
 
-      {pdfUrl && (
-        <div className="pdf-viewer">
-          <Document
-            file={pdfUrl}
-            onLoadSuccess={onDocumentLoadSuccess}
-          >
-            <Page pageNumber={pageNumber} />
-          </Document>
-          <p>
-            Page {pageNumber} of {numPages}
-          </p>
-          <div className="pdf-controls">
-            <button 
-              onClick={() => setPageNumber(pageNumber - 1)} 
-              disabled={pageNumber <= 1}
+      {fileUrl && (
+        <div className="file-viewer">
+          {fileType && fileType.startsWith('image/') ? (
+            <img src={fileUrl} alt="Uploaded" className="uploaded-image" />
+          ) : fileType === 'application/pdf' ? (
+            <Document
+              file={fileUrl}
+              onLoadSuccess={onDocumentLoadSuccess}
             >
-              Previous
-            </button>
-            <button 
-              onClick={() => setPageNumber(pageNumber + 1)} 
-              disabled={pageNumber >= numPages}
-            >
-              Next
-            </button>
-          </div>
+              <Page pageNumber={pageNumber} />
+            </Document>
+          ) : (
+            <p>Preview not available for this file type</p>
+          )}
+          {fileType === 'application/pdf' && (
+            <>
+              <p>
+                Page {pageNumber} of {numPages}
+              </p>
+              <div className="pdf-controls">
+                <button 
+                  onClick={() => setPageNumber(pageNumber - 1)} 
+                  disabled={pageNumber <= 1}
+                >
+                  Previous
+                </button>
+                <button 
+                  onClick={() => setPageNumber(pageNumber + 1)} 
+                  disabled={pageNumber >= numPages}
+                >
+                  Next
+                </button>
+              </div>
+            </>
+          )}
         </div>
       )}
     </div>

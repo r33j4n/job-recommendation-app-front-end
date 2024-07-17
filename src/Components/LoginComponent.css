@@ -12,6 +12,10 @@
     max-width: 50%;
     padding: 20px;
   }
+  .success-message{
+    color: #11ad26;
+  }
+  
   .tagline {
     color: #085045;
     margin-bottom: 20px;
@@ -53,7 +57,7 @@
   .forgot-password {
     display: block;
     text-align: right;
-    color: #009688;
+    color: #2314f0;
     text-decoration: none;
     font-size: 14px;
   }

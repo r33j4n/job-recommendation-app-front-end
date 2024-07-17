@@ -46,10 +46,10 @@ const SidebarComponent = () => {
                 <FaHome className="sidebar-icon" />
                 Home
             </NavLink>
-            <NavLink to="/dashboard/jobseeker" className="sidebar-item" activeClassName="active">
+            {/* <NavLink to="/dashboard/jobseeker" className="sidebar-item" activeClassName="active">
                 <FaTachometerAlt className="sidebar-icon" />
                 Dashboard
-            </NavLink>
+            </NavLink> */}
             <NavLink to="/alljobs/jobseeker" className="sidebar-item" activeClassName="active">
                 <FaBriefcase className="sidebar-icon" />
                 All Jobs
