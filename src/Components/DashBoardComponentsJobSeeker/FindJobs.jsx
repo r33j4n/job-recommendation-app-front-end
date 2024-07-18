@@ -9,9 +9,11 @@ const JobCard = ({ job, applications, onApplicationSubmit, highChance }) => {
   const [isApplied, setIsApplied] = useState(false);
 
   useEffect(() => {
-    const application = applications.find((app) => app.job.jobId === job.jobId);
-    setIsApplied(application && application.applicationStatus);
-  }, [applications, job.jobId]);
+    if (applications && job && job.jobId) {
+      const application = applications.find((app) => app.job && app.job.jobId === job.jobId);
+      setIsApplied(application && application.applicationStatus);
+    }
+  }, [applications, job]);
 
   const handleApply = async () => {
     try {
@@ -88,12 +90,11 @@ const FindJob = () => {
   const [experience, setExperience] = useState({});
   const [isLoading, setIsLoading] = useState(false);
 
-
   useEffect(() => {
     fetchApplications();
   }, []);
 
-  const fetchJobs = async (ids, setJobs) => {
+  const fetchJobs = async (ids) => {
     const fetchedJobs = await Promise.all(
       ids.map(async (id) => {
         try {
@@ -107,13 +108,11 @@ const FindJob = () => {
         }
       })
     );
-    setJobs(fetchedJobs.filter((job) => job !== null));
+    return fetchedJobs.filter((job) => job !== null);
   };
 
   const fetchApplications = async () => {
     try {
-      roleid = localStorage.getItem("roleId");
-      console.log(roleid);
       const response = await axios.get(`http://localhost:8081/application/jobs/${roleid}`);
       setApplications(response.data);
     } catch (error) {
@@ -121,19 +120,16 @@ const FindJob = () => {
     }
   };
 
- 
-
   const fetchSkillsAndJobs = async () => {
     setIsLoading(true);
     setShowResults(false);
     try {
       toast.info("Fetching your skills and experience...");
-      const getSkillsResponse = await axios.get(
-        `http://localhost:8081/jobseeker/getSkills/${roleid}`
-      );
-      const getExperienceResponse = await axios.get(
-        `http://localhost:8081/jobseeker/get/${roleid}`
-      );
+      const [getSkillsResponse, getExperienceResponse] = await Promise.all([
+        axios.get(`http://localhost:8081/jobseeker/getSkills/${roleid}`),
+        axios.get(`http://localhost:8081/jobseeker/get/${roleid}`)
+      ]);
+      
       const fetchedSkills = getSkillsResponse.data;
       const fetchedExperience = getExperienceResponse.data;
       setSkills(fetchedSkills);
@@ -157,16 +153,26 @@ const FindJob = () => {
         resultString
           .replace(/\(|\)|\[|\]/g, "")
           .split(",")
-          .map(Number);
+          .map(Number)
+          .filter(id => id !== 0);
 
-      const lowJobIds = parseJobIds(lowResponse.data.result);
+      const allLowJobIds = parseJobIds(lowResponse.data.result);
       const highJobIds = parseJobIds(highResponse.data.result);
 
+
+      // Remove high chance job IDs from low chance job IDs
+      const lowJobIds = allLowJobIds.filter(id => !highJobIds.includes(id));
+      console.log("Low chance job IDs:", lowJobIds);
+      console.log("High chance job IDs:", highJobIds);
+
       toast.info("Fetching job details...");
-      await Promise.all([
-        fetchJobs(lowJobIds, setLowChanceJobs),
-        fetchJobs(highJobIds, setHighChanceJobs)
+      const [highJobs, lowJobs] = await Promise.all([
+        fetchJobs(highJobIds),
+        fetchJobs(lowJobIds)
       ]);
+
+      setHighChanceJobs(highJobs);
+      setLowChanceJobs(lowJobs);
 
       setShowResults(true);
       toast.success("Job search completed!");
@@ -182,16 +188,17 @@ const FindJob = () => {
   const handleApplicationSubmit = () => {
     fetchApplications();
   };
+
   return (
     <div className="find-job-container">
-    <div className="button-container">
-      <button className="find-button" onClick={fetchSkillsAndJobs} disabled={isLoading}>
-        {isLoading ? "Searching..." : "Find Jobs"}
-      </button>
-    </div>
-    {isLoading && <LinearProgress />}
-    {showResults && (
-      <div className="job-results">
+      <div className="button-container">
+        <button className="find-button" onClick={fetchSkillsAndJobs} disabled={isLoading}>
+          {isLoading ? "Searching..." : "Find Jobs"}
+        </button>
+      </div>
+      {isLoading && <LinearProgress />}
+      {showResults && (
+        <div className="job-results">
           <h2>High Chances</h2>
           {highChanceJobs.reduce((rows, job, index) => {
             if (index % 2 === 0) {
