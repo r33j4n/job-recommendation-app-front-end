@@ -89,7 +89,7 @@ const LoginJobProvider = () => {
       </div>
       <div className="login-form">
         <h2>Welcome Back..!</h2>
-        <h3 className="tagline">Unlock Hidden Opportunities: AI Finds Jobs for You.</h3>
+        <h3 className="tagline">Find Your Ideal Candidates with AI-Powered Precision.</h3>
         <form onSubmit={handleLogin}>
           <div className="form-group">
             <input

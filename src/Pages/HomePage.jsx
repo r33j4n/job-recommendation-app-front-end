@@ -23,7 +23,7 @@ const HomePage = () => {
 
   return (
     <div>
-      <NavBarComponent />
+      {/* <NavBarComponent /> */}
       <FloatContent />
       {loginStatus ? null : <RoleSelectionComponent />}
       {/* <Navigation/> */}

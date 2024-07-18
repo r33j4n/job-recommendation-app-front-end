@@ -25,7 +25,42 @@ const DeleteConfirmationModal = ({ isOpen, onClose, onConfirm }) => {
   );
 };
 
-const JobCard = ({ job, applicantCount, onDelete }) => {
+const ApplicantsModal = ({ isOpen, onClose, jobSeekers }) => {
+  if (!isOpen) return null;
+
+  return (
+    <div className="modal-overlay-posted-jobs">
+      <div className="modal-content-posted-jobs">
+        <h2>Job Seekers</h2>
+        <div className="job-seekers-list">
+          {jobSeekers.length === 0 ? (
+            <p>No Applicants Applied for this Job</p>
+          ) : (
+            jobSeekers.map((seeker) => (
+              <div key={seeker.jobSeekerId} className="job-seeker">
+                <p><strong>ID:</strong> {seeker.jobSeekerId}</p>
+                <p><strong>Username:</strong> {seeker.userName}</p>
+                <p><strong>Email:</strong> {seeker.email}</p>
+                <p><strong>Address:</strong> {seeker.address}</p>
+                <p><strong>Phone:</strong> {seeker.phoneNumber}</p>
+                <p><strong>Education:</strong> {seeker.education}</p>
+                <p><strong>Experience:</strong> {seeker.experience}</p>
+                <p><strong>Skills:</strong> {seeker.skills}</p>
+              </div>
+            ))
+          )}
+        </div>
+        <div className="modal-buttons-posted-jobs">
+          <button className="cancel-btn-posted-jobs" onClick={onClose}>
+            Close
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+const JobCard = ({ job, applicantCount, onDelete, onShowApplicants }) => {
   const navigate = useNavigate();
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const hiredStatus = job.isHired ? "Hired" : "Not Hired";
@@ -76,9 +111,12 @@ const JobCard = ({ job, applicantCount, onDelete }) => {
             {skill}
           </span>
         ))}
-      </div>{" "}
+      </div>
       <div className="button-group-posted-jobs">
-        <button className="applicants-btn-posted-jobs">
+        <button
+          className="applicants-btn-posted-jobs"
+          onClick={() => onShowApplicants(job.jobId)}
+        >
           {applicantCount} Applicants
         </button>
         <button className="edit-btn-posted-jobs" onClick={handleEdit}>
@@ -101,6 +139,8 @@ const PostedJobs = () => {
   const roleId = localStorage.getItem("roleId");
   const [jobs, setJobs] = useState([]);
   const [applicantCounts, setApplicantCounts] = useState({});
+  const [isApplicantsModalOpen, setIsApplicantsModalOpen] = useState(false);
+  const [jobSeekers, setJobSeekers] = useState([]);
 
   useEffect(() => {
     fetchJobs();
@@ -126,8 +166,24 @@ const PostedJobs = () => {
     }
   };
 
+  const fetchJobSeekers = async (jobId) => {
+    try {
+      const response = await axios.get(
+        `http://localhost:8081/application/job-seeker/${jobId}`
+      );
+      setJobSeekers(response.data);
+      setIsApplicantsModalOpen(true);
+    } catch (error) {
+      console.error("Error fetching job seekers:", error);
+    }
+  };
+
   const handleDeleteJob = (jobId) => {
     setJobs(jobs.filter((job) => job.jobId !== jobId));
+  };
+
+  const handleShowApplicants = (jobId) => {
+    fetchJobSeekers(jobId);
   };
 
   return (
@@ -139,9 +195,15 @@ const PostedJobs = () => {
             job={job}
             applicantCount={applicantCounts[job.jobId] || 0}
             onDelete={handleDeleteJob}
+            onShowApplicants={handleShowApplicants}
           />
         ))}
       </div>
+      <ApplicantsModal
+        isOpen={isApplicantsModalOpen}
+        onClose={() => setIsApplicantsModalOpen(false)}
+        jobSeekers={jobSeekers}
+      />
     </div>
   );
 };
