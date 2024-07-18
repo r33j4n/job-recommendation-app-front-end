@@ -3,6 +3,7 @@ import axios from "axios";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import "./FindJobs.css";
+import LinearProgress from '@mui/material/LinearProgress'; // Import this if you're using Material-UI
 
 const JobCard = ({ job, applications, onApplicationSubmit, highChance }) => {
   const [isApplied, setIsApplied] = useState(false);
@@ -85,6 +86,8 @@ const FindJob = () => {
   const [error, setError] = useState(null);
   const [showResults, setShowResults] = useState(false);
   const [experience, setExperience] = useState({});
+  const [isLoading, setIsLoading] = useState(false);
+
 
   useEffect(() => {
     fetchApplications();
@@ -121,7 +124,10 @@ const FindJob = () => {
  
 
   const fetchSkillsAndJobs = async () => {
+    setIsLoading(true);
+    setShowResults(false);
     try {
+      toast.info("Fetching your skills and experience...");
       const getSkillsResponse = await axios.get(
         `http://localhost:8081/jobseeker/getSkills/${roleid}`
       );
@@ -132,9 +138,8 @@ const FindJob = () => {
       const fetchedExperience = getExperienceResponse.data;
       setSkills(fetchedSkills);
       setExperience(fetchedExperience);
-      console.log(fetchedSkills.skills);
-      console.log(fetchedExperience.experience);
 
+      toast.info("Analyzing job matches...");
       const requestData = {
         question: fetchedSkills.skills
       };
@@ -156,33 +161,37 @@ const FindJob = () => {
 
       const lowJobIds = parseJobIds(lowResponse.data.result);
       const highJobIds = parseJobIds(highResponse.data.result);
-      console.log("lowJobIds:", lowJobIds);
-      console.log("highJobIds:", highJobIds);
 
-      fetchJobs(lowJobIds, setLowChanceJobs);
-      fetchJobs(highJobIds, setHighChanceJobs);
+      toast.info("Fetching job details...");
+      await Promise.all([
+        fetchJobs(lowJobIds, setLowChanceJobs),
+        fetchJobs(highJobIds, setHighChanceJobs)
+      ]);
 
       setShowResults(true);
+      toast.success("Job search completed!");
     } catch (err) {
       setError(err.message);
       console.error("Error fetching Skills and Jobs:", err);
+      toast.error("An error occurred while searching for jobs.");
+    } finally {
+      setIsLoading(false);
     }
   };
 
   const handleApplicationSubmit = () => {
     fetchApplications();
   };
-  
-
   return (
     <div className="find-job-container">
-      <div className="button-container">
-        <button className="find-button" onClick={fetchSkillsAndJobs}>
-          Find Jobs
-        </button>
-      </div>
-      {showResults && (
-        <div className="job-results">
+    <div className="button-container">
+      <button className="find-button" onClick={fetchSkillsAndJobs} disabled={isLoading}>
+        {isLoading ? "Searching..." : "Find Jobs"}
+      </button>
+    </div>
+    {isLoading && <LinearProgress />}
+    {showResults && (
+      <div className="job-results">
           <h2>High Chances</h2>
           {highChanceJobs.reduce((rows, job, index) => {
             if (index % 2 === 0) {
