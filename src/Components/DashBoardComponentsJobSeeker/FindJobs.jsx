@@ -84,6 +84,7 @@ const FindJob = () => {
   const [skills, setSkills] = useState({});
   const [error, setError] = useState(null);
   const [showResults, setShowResults] = useState(false);
+  const [experience, setExperience] = useState({});
 
   useEffect(() => {
     fetchApplications();
@@ -108,28 +109,43 @@ const FindJob = () => {
 
   const fetchApplications = async () => {
     try {
-      const response = await axios.get("http://localhost:8081/application/all");
+      roleid = localStorage.getItem("roleId");
+      console.log(roleid);
+      const response = await axios.get(`http://localhost:8081/application/jobs/${roleid}`);
       setApplications(response.data);
     } catch (error) {
       console.error("Error fetching applications:", error);
     }
   };
 
+ 
+
   const fetchSkillsAndJobs = async () => {
     try {
       const getSkillsResponse = await axios.get(
         `http://localhost:8081/jobseeker/getSkills/${roleid}`
       );
+      const getExperienceResponse = await axios.get(
+        `http://localhost:8081/jobseeker/get/${roleid}`
+      );
       const fetchedSkills = getSkillsResponse.data;
+      const fetchedExperience = getExperienceResponse.data;
       setSkills(fetchedSkills);
+      setExperience(fetchedExperience);
+      console.log(fetchedSkills.skills);
+      console.log(fetchedExperience.experience);
 
       const requestData = {
         question: fetchedSkills.skills
       };
-
+      const requestDataWithExperience = {
+        question: fetchedSkills.skills,
+        experience: fetchedExperience.experience
+      };
+      
       const [lowResponse, highResponse] = await Promise.all([
         axios.post("http://127.0.0.1:5000/chat", requestData),
-        axios.post("http://127.0.0.1:5000/chat_high", requestData),
+        axios.post("http://127.0.0.1:5000/chat_high", requestDataWithExperience),
       ]);
 
       const parseJobIds = (resultString) =>
@@ -140,6 +156,8 @@ const FindJob = () => {
 
       const lowJobIds = parseJobIds(lowResponse.data.result);
       const highJobIds = parseJobIds(highResponse.data.result);
+      console.log("lowJobIds:", lowJobIds);
+      console.log("highJobIds:", highJobIds);
 
       fetchJobs(lowJobIds, setLowChanceJobs);
       fetchJobs(highJobIds, setHighChanceJobs);
@@ -154,6 +172,7 @@ const FindJob = () => {
   const handleApplicationSubmit = () => {
     fetchApplications();
   };
+  
 
   return (
     <div className="find-job-container">
