@@ -4,6 +4,8 @@ import './AppliedJobs.css';
 
 const AppliedJobs = () => {
   const [jobs, setJobs] = useState([]);
+  const [showModal, setShowModal] = useState(false);
+  const [jobToDelete, setJobToDelete] = useState(null);
   const roleid = localStorage.getItem("roleId");
 
   useEffect(() => {
@@ -17,11 +19,31 @@ const AppliedJobs = () => {
     };
 
     fetchJobs();
-  }, []);
+  }, [roleid]);
+
+  const handleDeleteClick = (jobId) => {
+    setJobToDelete(jobId);
+    setShowModal(true);
+  };
+
+  const handleDeleteConfirm = async () => {
+    try {
+      await axios.delete(`http://localhost:8081/application/deletebyjobidandjobseekerid`, {
+        data: {
+          jobSeekerId: roleid,
+          jobId: jobToDelete,
+        },
+      });
+      setJobs(jobs.filter(job => job.jobId !== jobToDelete));
+    } catch (error) {
+      console.error('Error deleting job:', error);
+    }
+    setShowModal(false);
+  };
 
   return (
     <div className="applied-jobs-container">
-      {jobs.map((job, index) => (
+      {jobs.map((job) => (
         <div key={job.jobId} className="job-card">
           <div className={`status-badge ${job.isHired ? 'hired' : 'not-hired'}`}>
             {job.isHired ? 'Hired' : 'Not Hired'}
@@ -37,9 +59,24 @@ const AppliedJobs = () => {
               <span key={skillIndex} className="skill-tag">{skill}</span>
             ))}
           </div>
-          <button className="applied-button" disabled>Applied</button>
+          <div className="action-buttons1">
+            <button className="applied-button" disabled>Applied</button>
+            <button className="delete-button" onClick={() => handleDeleteClick(job.jobId)}>Withdraw</button>
+          </div>
         </div>
       ))}
+
+      {showModal && (
+        <div className="modal">
+          <div className="modal-content">
+            <h2>Are you sure you want to withdraw your application for this job?</h2>
+            <div className="modal-buttons">
+              <button className="modal-button yes-button" onClick={handleDeleteConfirm}>YES</button>
+              <button className="modal-button" onClick={() => setShowModal(false)}>CANCEL</button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
