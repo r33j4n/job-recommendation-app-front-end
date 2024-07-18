@@ -1,8 +1,8 @@
 // PostedJobs.js
-import React, { useState, useEffect } from 'react';
-import axios from 'axios';
-import { useNavigate } from 'react-router-dom';
-import './PostedJobs.css';
+import React, { useState, useEffect } from "react";
+import axios from "axios";
+import { useNavigate } from "react-router-dom";
+import "./PostedJobs.css";
 
 const DeleteConfirmationModal = ({ isOpen, onClose, onConfirm }) => {
   if (!isOpen) return null;
@@ -13,8 +13,12 @@ const DeleteConfirmationModal = ({ isOpen, onClose, onConfirm }) => {
         <h2>Confirm Deletion</h2>
         <p>Are you sure you want to delete this job?</p>
         <div className="modal-buttons-posted-jobs">
-          <button className="cancel-btn-posted-jobs" onClick={onClose}>Cancel</button>
-          <button className="confirm-btn-posted-jobs" onClick={onConfirm}>Yes</button>
+          <button className="cancel-btn-posted-jobs" onClick={onClose}>
+            Cancel
+          </button>
+          <button className="confirm-btn-posted-jobs" onClick={onConfirm}>
+            Yes
+          </button>
         </div>
       </div>
     </div>
@@ -24,9 +28,9 @@ const DeleteConfirmationModal = ({ isOpen, onClose, onConfirm }) => {
 const JobCard = ({ job, applicantCount, onDelete }) => {
   const navigate = useNavigate();
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
-  const hiredStatus = job.isHired ? 'Hired' : 'Not Hired';
-  const statusColor = job.isHired ? 'red' : 'green';
-  const skills = job.jobSkills ? job.jobSkills.split(', ') : [];
+  const hiredStatus = job.isHired ? "Hired" : "Not Hired";
+  const statusColor = job.isHired ? "red" : "green";
+  const skills = job.jobSkills ? job.jobSkills.split(", ") : [];
 
   const handleEdit = () => {
     navigate(`/editjobs/jobprovider/${job.jobId}`);
@@ -41,7 +45,7 @@ const JobCard = ({ job, applicantCount, onDelete }) => {
       await axios.delete(`http://localhost:8081/job/delete/${job.jobId}`);
       onDelete(job.jobId);
     } catch (error) {
-      console.error('Error deleting job:', error);
+      console.error("Error deleting job:", error);
     }
     setIsDeleteModalOpen(false);
   };
@@ -53,21 +57,38 @@ const JobCard = ({ job, applicantCount, onDelete }) => {
         <span className={`status-badge ${statusColor}`}>{hiredStatus}</span>
       </div>
       <p>{job.jobDescription}</p>
-      <p><strong>Experience:</strong> {job.jobExperience}</p>
-      <p><strong>Education:</strong> {job.qualifiedEducation}</p>
-      <p><strong>Location:</strong> {job.jobLocation}</p>
-      <p><strong>Posted on:</strong> {new Date(job.jobPostedDate).toLocaleDateString()}</p>
-      <div className="skills">
-        {skills.map((skill, index) => (
-          <span key={index} className="skill-badge">{skill}</span>
+      <p>
+        <strong>Experience:</strong> {job.jobExperience}
+      </p>
+      <p>
+        <strong>Education:</strong> {job.qualifiedEducation}
+      </p>
+      <p>
+        <strong>Location:</strong> {job.jobLocation}
+      </p>
+      <p>
+        <strong>Posted on:</strong>{" "}
+        {new Date(job.jobPostedDate).toLocaleDateString()}
+      </p>
+      <div className="job-skills">
+        {job.jobSkills.split(", ").map((skill) => (
+          <span key={skill} className="skill">
+            {skill}
+          </span>
         ))}
-      </div>
+      </div>{" "}
       <div className="button-group-posted-jobs">
-        <button className="applicants-btn-posted-jobs">{applicantCount} Applicants</button>
-        <button className="edit-btn-posted-jobs" onClick={handleEdit}>Edit</button>
-        <button className="delete-btn-posted-jobs" onClick={handleDeleteClick}>Delete</button>
+        <button className="applicants-btn-posted-jobs">
+          {applicantCount} Applicants
+        </button>
+        <button className="edit-btn-posted-jobs" onClick={handleEdit}>
+          Edit
+        </button>
+        <button className="delete-btn-posted-jobs" onClick={handleDeleteClick}>
+          Delete
+        </button>
       </div>
-      <DeleteConfirmationModal 
+      <DeleteConfirmationModal
         isOpen={isDeleteModalOpen}
         onClose={() => setIsDeleteModalOpen(false)}
         onConfirm={handleDeleteConfirm}
@@ -77,7 +98,7 @@ const JobCard = ({ job, applicantCount, onDelete }) => {
 };
 
 const PostedJobs = () => {
-  const roleId = localStorage.getItem('roleId');
+  const roleId = localStorage.getItem("roleId");
   const [jobs, setJobs] = useState([]);
   const [applicantCounts, setApplicantCounts] = useState({});
 
@@ -87,32 +108,35 @@ const PostedJobs = () => {
 
   const fetchJobs = async () => {
     try {
-      const response = await axios.get(`http://localhost:8081/jobprovider/${roleId}/jobs`);
+      const response = await axios.get(
+        `http://localhost:8081/jobprovider/${roleId}/jobs`
+      );
       setJobs(response.data);
 
       const counts = await Promise.all(
-        response.data.map(job => 
-          axios.get(`http://localhost:8081/application/count/${job.jobId}`)
-            .then(res => ({ [job.jobId]: res.data }))
+        response.data.map((job) =>
+          axios
+            .get(`http://localhost:8081/application/count/${job.jobId}`)
+            .then((res) => ({ [job.jobId]: res.data }))
         )
       );
       setApplicantCounts(Object.assign({}, ...counts));
     } catch (error) {
-      console.error('Error fetching jobs:', error);
+      console.error("Error fetching jobs:", error);
     }
   };
 
   const handleDeleteJob = (jobId) => {
-    setJobs(jobs.filter(job => job.jobId !== jobId));
+    setJobs(jobs.filter((job) => job.jobId !== jobId));
   };
 
   return (
     <div className="posted-jobs-container-posted-jobs">
       <div className="job-grid-posted-jobs">
-        {jobs.map(job => (
-          <JobCard 
-            key={job.jobId} 
-            job={job} 
+        {jobs.map((job) => (
+          <JobCard
+            key={job.jobId}
+            job={job}
             applicantCount={applicantCounts[job.jobId] || 0}
             onDelete={handleDeleteJob}
           />

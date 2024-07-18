@@ -58,9 +58,11 @@ const NavBarComponent = () => {
         </li>
         <li>
           {loginStatus ? (
-            <span onClick={handleLogout} className="login-logout">
-              Logout
-            </span>
+            // <span onClick={handleLogout} className="login-logout">
+            //   Logout
+            // </span>
+              <span  className="login-logout">
+             </span>
           ) : (
             // <Link to="/login" className="login-logout">Login</Link>
             <a href="#join" className="page-scroll">

@@ -1,11 +1,13 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import { toast } from 'react-toastify';
+import { useNavigate } from 'react-router-dom';
 import 'react-toastify/dist/ReactToastify.css';
 import './CreateJob.css';
 
 const CreateJob = () => {
     const roleid = localStorage.getItem('roleId');
+    const navigate = useNavigate();
 
   const [job, setJob] = useState({
     jobTitle: '',
@@ -57,6 +59,8 @@ const CreateJob = () => {
         jobSkills: '',
         qualifiedEducation: ''
       });
+
+      navigate('/postedjobs/jobprovider');
     } catch (err) {
       setError('Failed to create job');
       
@@ -71,6 +75,10 @@ const CreateJob = () => {
       });
     }
   };
+
+  const handleCancel=(e)=>{
+    navigate('/postedjobs/jobprovider');
+  }
 
   return (
     <div className="create-job-container">
@@ -143,7 +151,7 @@ const CreateJob = () => {
         </div>
         {error && <p className="error-message">{error}</p>}
         <div className="button-group">
-          <button type="button" className="cancel-button">Cancel</button>
+          <button type="button" className="cancel-button" onClick={handleCancel}>Cancel</button>
           <button type="submit" className="save-button">Save</button>
         </div>
       </form>

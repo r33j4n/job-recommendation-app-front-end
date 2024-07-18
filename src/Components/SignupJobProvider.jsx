@@ -15,18 +15,56 @@ const SignUpJobProviderComponent = () => {
     confirmPassword: '',
     userName: ''
   });
-  const [error, setError] = useState('');
+  const [errors, setErrors] = useState({});
+
+  const validateEmail = (email) => {
+    const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return re.test(email);
+  };
+
+  const validatePassword = (password) => {
+    const re = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+    return re.test(password);
+  };
 
   const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
+    const { name, value } = e.target;
+    setFormData({ ...formData, [name]: value });
+    
+    // Clear error when user starts typing
+    setErrors({...errors, [name]: ''});
+
+    if (name === 'email') {
+      if (!validateEmail(value)) {
+        setErrors({...errors, email: 'Please enter a valid email address'});
+      }
+    }
+
+    if (name === 'password') {
+      if (!validatePassword(value)) {
+        setErrors({...errors, password: 'Password must contain at least 8 characters,atleast one uppercase letter, one lowercase letter, one number, and one special character'});
+      }
+    }
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setError('');
+    let newErrors = {};
+
+    if (!validateEmail(formData.email)) {
+      newErrors.email = 'Please enter a valid email address';
+    }
+
+    if (!validatePassword(formData.password)) {
+      newErrors.password = 'Password must contain at least 8 characters,atleast one uppercase letter, one lowercase letter, one number, and one special character';
+    }
 
     if (formData.password !== formData.confirmPassword) {
-      setError("Passwords don't match");
+      newErrors.confirmPassword = "Passwords don't match";
+    }
+
+    if (Object.keys(newErrors).length > 0) {
+      setErrors(newErrors);
       return;
     }
 
@@ -47,21 +85,21 @@ const SignUpJobProviderComponent = () => {
         }, 2000);
       }
     } catch (err) {
-      setError('An error occurred. Please try again.');
+      setErrors({...errors, general: 'An error occurred. Please try again.'});
       console.error(err);
     }
   };
 
   return (
     <div className="signup-container">
-            <ToastContainer />
+      <ToastContainer />
       <div className="signup-image">
-      <img src={SignUpImage} alt="Login illustration" />
+        <img src={SignUpImage} alt="Login illustration" />
       </div>
       <div className="signup-form">
         <h2>Create Account</h2>
         <form onSubmit={handleSubmit}>
-        <input
+          <input
             type="text"
             name="companyName"
             placeholder="Company Name"
@@ -78,6 +116,8 @@ const SignUpJobProviderComponent = () => {
             onChange={handleChange}
             required
           />
+          {errors.email && <p className="error-message">{errors.email}</p>}
+          
           <input
             type="text"
             name="userName"
@@ -86,6 +126,7 @@ const SignUpJobProviderComponent = () => {
             onChange={handleChange}
             required
           />
+          
           <input
             type="password"
             name="password"
@@ -94,6 +135,8 @@ const SignUpJobProviderComponent = () => {
             onChange={handleChange}
             required
           />
+          {errors.password && <p className="error-message">{errors.password}</p>}
+          
           <input
             type="password"
             name="confirmPassword"
@@ -102,9 +145,11 @@ const SignUpJobProviderComponent = () => {
             onChange={handleChange}
             required
           />
+          {errors.confirmPassword && <p className="error-message">{errors.confirmPassword}</p>}
+          
           <button type="submit" className="signup-button">SIGN UP</button>
         </form>
-        {error && <p className="error-message">{error}</p>}
+        {errors.general && <p className="error-message">{errors.general}</p>}
         <p className="login-link">
           Already have an account? <a href="/login/jobSeeker">Log in</a>
         </p>

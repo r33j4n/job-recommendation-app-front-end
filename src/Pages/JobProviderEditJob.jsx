@@ -45,6 +45,10 @@ const JobProviderEditJobs = () => {
     });
   };
 
+  const handleCancel=(e)=>{
+    navigate('/postedjobs/jobprovider');
+  }
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (Object.values(job).some(value => value === '')) {
@@ -155,7 +159,7 @@ const JobProviderEditJobs = () => {
         </div>
         {error && <p className="error-message">{error}</p>}
         <div className="button-group">
-          <button type="button" className="cancel-button" onClick={() => navigate('postedjobs/jobprovider')}>Cancel</button>
+          <button type="button" className="cancel-button" onClick={handleCancel}>Cancel</button>
           <button type="submit" className="save-button">Update</button>
         </div>
       </form>
