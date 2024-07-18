@@ -14,12 +14,13 @@ const JobCard = ({ job, applications, onApplicationSubmit, highChance }) => {
 
   const handleApply = async () => {
     try {
+      const roleid = localStorage.getItem("roleId");
       const response = await axios.post(
         "http://localhost:8081/application/create",
         {
           applicationStatus: true,
           jobAppliedDate: new Date().toISOString().split("T")[0],
-          jobSeekerId: 1,
+          jobSeekerId: roleid,
           jobId: job.jobId,
         }
       );

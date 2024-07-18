@@ -102,8 +102,45 @@ const ResumeUpload = () => {
   };
 
   const handleUpdateData = async () => {
-    // ... (keep the existing handleUpdateData function)
-  };
+  if (!roleid) {
+    toast.error('User not logged in');
+    return;
+  }
+
+  setUpdating(true);
+  try {
+    // Call Flask API to get the data
+    const flaskResponse = await axios.post('http://127.0.0.1:5000/query-cv', { userID: roleid });
+    
+    if (flaskResponse.status === 200) {
+      const { experience, skills, education } = flaskResponse.data.response;
+
+      const springBootData = {
+        education: education.length > 0 ? education[0].Degree : '',
+        experience: experience.Details.map(detail => 
+          `${detail.Role ? detail.Role : ''} ${detail.CompanyName ? `at ${detail.CompanyName}` : ''}${detail.Duration ? ` (${detail.Duration})` : ''}`
+        ).join(', '),
+        skills: skills.join(', ')
+      };
+      console.log('Spring Boot data:', springBootData);
+
+      const springBootResponse = await axios.put(`http://127.0.0.1:8081/jobseeker/update_skills/${roleid}`, springBootData);
+
+      if (springBootResponse.status === 200) {
+        toast.success('Profile updated successfully!');
+      } else {
+        throw new Error('Failed to update profile in Spring Boot');
+      }
+    } else {
+      throw new Error('Failed to get data from Flask API');
+    }
+  } catch (error) {
+    console.error('Error updating data:', error);
+    toast.error(error.message || 'Failed to update data. Please try again.');
+  } finally {
+    setUpdating(false);
+  }
+};
 
   return (
     <div className="resume-upload">
