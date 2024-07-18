@@ -6,8 +6,8 @@
 
 .job-grid-posted-jobs {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-  gap: 20px;
+  grid-template-columns: repeat(auto-fill, minmax(500px, 1fr));
+  gap: 60px;
 }
 
 .job-card-posted-jobs {
@@ -60,7 +60,7 @@
 
 .button-group-posted-jobs {
   display: flex;
-  justify-content: space-between;
+  justify-content: flex-end;
   margin-top: 15px;
 }
 
@@ -70,6 +70,7 @@
   border-radius: 4px;
   cursor: pointer;
   font-weight: bold;
+  margin-right: 10px;
 }
 
 .applicants-btn-posted-jobs {
