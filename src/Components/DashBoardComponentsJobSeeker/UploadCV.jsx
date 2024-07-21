@@ -69,15 +69,29 @@ const ResumeUpload = () => {
 
     setUploading(true);
     try {
-      const response = await axios.post(`http://localhost:8081/jobseeker/upload-cv-img/${roleid}`, formData, {
+      const springResponse = await axios.post(`http://localhost:8081/jobseeker/upload-cv-img/${roleid}`, formData, {
         headers: {
           'Content-Type': 'multipart/form-data'
         }
       });
-      if (response.status === 200) {
-        toast.success(response.data.message || 'File uploaded successfully!');
+
+      if (springResponse.status === 200) {
+        toast.success(springResponse.data.message || 'File uploaded to Spring Boot successfully!');
+        
+        const flaskResponse = await axios.post(`http://127.0.0.1:5000/upload-cv`, formData, {
+          headers: {
+            'Content-Type': 'multipart/form-data'
+          }
+        });
+
+        if (flaskResponse.status === 200) {
+          toast.success(flaskResponse.data.db_message || 'File uploaded to Flask successfully!');
+        } else {
+          throw new Error(flaskResponse.data.error || 'Failed to upload file to Flask');
+        }
+
       } else {
-        throw new Error(response.data.error || 'Failed to upload file');
+        throw new Error(springResponse.data.error || 'Failed to upload file to Spring Boot');
       }
     } catch (error) {
       console.error('Error uploading file:', error);
