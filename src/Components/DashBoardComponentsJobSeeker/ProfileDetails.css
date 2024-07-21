@@ -15,6 +15,20 @@ h2 {
   display: flex;
   gap: 20px;
 }
+.delete-btn {
+  background-color: rgb(180, 12, 12);
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  cursor: pointer;
+  font-size: 16px;
+  margin-top: 10px;
+  border-radius: 5px;
+}
+
+.delete-btn:hover {
+  background-color: darkred;
+}
 
 .form-group {
   margin-bottom: 15px;
