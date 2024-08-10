@@ -4,7 +4,7 @@ import SignUpJobProviderComponent from "../Components/SignupJobProvider";
 const SignupJobProvider = () => {
   return (
     <div>
-        <NavBarComponent/>
+        {/* <NavBarComponent/> */}
         <SignUpJobProviderComponent/>
     </div>
   );

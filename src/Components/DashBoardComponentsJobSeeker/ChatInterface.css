@@ -108,3 +108,12 @@
   ::-webkit-scrollbar-thumb:hover {
     background: #555;
   }
+
+  @media (max-width: 768px) {
+    .input-container input[type="text"] {
+
+      font-size: 10px;
+
+    }
+
+  }

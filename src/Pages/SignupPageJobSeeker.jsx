@@ -4,7 +4,7 @@ import NavBarComponent from "../Components/NavigationBar";
 const SignupJobSeeker = () => {
   return (
     <div>
-        <NavBarComponent/>
+        {/* <NavBarComponent/> */}
       <SignUpJobSeekerComponent />
     </div>
   );

@@ -6,7 +6,7 @@ import NavBarComponent from "../Components/NavigationBar";
 const LoginPageJobProvider = () => {
   return (
     <div>
-        <NavBarComponent/>
+        {/* <NavBarComponent/> */}
       <LoginJobProvider />
     </div>
   );

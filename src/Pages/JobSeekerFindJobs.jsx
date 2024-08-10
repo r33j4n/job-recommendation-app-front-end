@@ -3,17 +3,12 @@ import SidebarComponent from "../Components/DashBoardComponentsJobSeeker/SideBar
 import "./JobSeekerDashboard.css"
 import FindJob from "../Components/DashBoardComponentsJobSeeker/FindJobs.jsx";
 const JobSeekerFindJobs = () => {
-    return (
-        <div className="layout">
-          <div className="sidebar">
-            <h2>Quick Access</h2>
-            <SidebarComponent/>
-            {/* Add sidebar content here */}
-          </div>
+      return (
+        <div className="main-layout">
+          <SidebarComponent />
           <div className="content">
-            <h2>Find Jobs Section</h2>
-            <FindJob/>
-            {/* Add main content here */}
+          <h2>Find Jobs Section</h2>
+          <FindJob/>
           </div>
         </div>
       );

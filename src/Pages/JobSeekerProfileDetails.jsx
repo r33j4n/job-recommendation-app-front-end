@@ -3,18 +3,11 @@ import SidebarComponent from "../Components/DashBoardComponentsJobSeeker/SideBar
 import "./JobSeekerDashboard.css"
 import ProfileDetails from "../Components/DashBoardComponentsJobSeeker/ProfileDetails.jsx";
 const JobSeekerProfileDetails = () => {
-    return (
-        <div className="layout">
-          <div className="sidebar">
-            <h2>Quick Access</h2>
-            <SidebarComponent/>
-            {/* Add sidebar content here */}
-          </div>
+      return (
+        <div className="main-layout">
+          <SidebarComponent />
           <div className="content">
-            {/* <h2>Profile Details Section</h2> */}
-            {/* <Navbar/> */}
-            <ProfileDetails/>
-            {/* Add main content here */}
+          <ProfileDetails/>          
           </div>
         </div>
       );

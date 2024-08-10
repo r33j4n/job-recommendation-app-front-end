@@ -81,8 +81,8 @@ const AllJobs = () => {
         const applicationStatus = getApplicationStatus(job.jobId);
         return (
           <div key={job.jobId} className="job-card">
-            <div className="job-header">
-              <h2>{job.jobTitle}</h2>
+            <div className="job-header-alljobs">
+              <h2 className="h2">{job.jobTitle}</h2>
               <span className={`status ${job.isHired ? "hired" : "not-hired"}`}>
                 {job.isHired ? "Hired" : "Not Hired"}
               </span>
