@@ -5,7 +5,7 @@ import ResetPassword from "../Components/ResetPasswordJobSeeker";
 const ResetPasswordJobSeeker = () => {
   return (
     <div>
-        <NavBarComponent/>
+        {/* <NavBarComponent/> */}
         <ResetPassword/>
     </div>
   );

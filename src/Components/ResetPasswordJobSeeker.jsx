@@ -44,6 +44,9 @@ const ResetPassword = () => {
       setSuccess('');
     }
   };
+  const handlehome = async () => {
+    navigate('/home');
+};
 
   return (
     <div className="reset-password-container">
@@ -61,6 +64,7 @@ const ResetPassword = () => {
           />
         </div>
         <button onClick={handleReset}>Reset Password</button>
+        <button onClick={handlehome}>Go to Home Page</button>
         {error && <p className="error">{error}</p>}
         {success && <p className="success">{success}</p>}
       </div>

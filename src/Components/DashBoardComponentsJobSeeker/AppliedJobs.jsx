@@ -48,7 +48,7 @@ const AppliedJobs = () => {
           <div className={`status-badge ${job.isHired ? 'hired' : 'not-hired'}`}>
             {job.isHired ? 'Hired' : 'Not Hired'}
           </div>
-          <h2>{job.jobTitle}</h2>
+          <h2 className='h2'>{job.jobTitle}</h2>
           <p>{job.jobDescription}</p>
           <p><strong>Experience:</strong> {job.jobExperience}</p>
           <p><strong>Education:</strong> {job.qualifiedEducation}</p>

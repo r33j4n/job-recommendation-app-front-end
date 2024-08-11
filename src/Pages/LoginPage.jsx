@@ -4,7 +4,7 @@ import NavBarComponent from "../Components/NavigationBar";
 const LoginPage = () => {
   return (
     <div>
-        <NavBarComponent/>
+        {/* <NavBarComponent/> */}
       <LoginComponent />
     </div>
   );
