@@ -4,7 +4,7 @@ import axios from 'axios';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import './Sidebar.css';
-import { FaHome, FaBriefcase, FaClipboardList, FaSearch, FaUser, FaTrashAlt, FaSignOutAlt, FaFileUpload, FaBars, FaTimes } from 'react-icons/fa';
+import { FaHome, FaBriefcase, FaClipboardList, FaSearch, FaUser, FaTrashAlt, FaSignOutAlt, FaFileUpload, FaBars, FaTimes, FaPaintRoller, FaBook } from 'react-icons/fa';
 import { FaMessage } from 'react-icons/fa6';
 
 const SidebarComponent = () => {
@@ -74,6 +74,10 @@ const SidebarComponent = () => {
                 <NavLink to="/chat/jobseeker" className="sidebar-item" activeClassName="active">
                     <FaMessage className="sidebar-icon" />
                     Chat
+                </NavLink>
+                <NavLink to="/feedback/jobseeker" className="sidebar-item" activeClassName="active">
+                    <FaBook className="sidebar-icon" />
+                    FeedBack
                 </NavLink>
                 <NavLink to="#" className="sidebar-item1" onClick={handleDeleteClick}>
                     <FaTrashAlt className="sidebar-icon" />

@@ -21,6 +21,7 @@ import SignupJobProvider from "../Pages/SignupPageJobProvider";
 import JobProviderEditJobs from "../Pages/JobProviderEditJob";
 import ResetPasswordJobSeeker from "../Pages/ResetPasswordJobSeeker";
 import ResetPasswordJobProvider from "../Pages/ResetPasswordJobProvider";
+import FeedBackGenerationPage from "../Pages/FeedBackPage";
 
 const router = createBrowserRouter([
   { path: "/", element: <HomePage /> },
@@ -35,6 +36,7 @@ const router = createBrowserRouter([
   { path:"/appliedjobs/jobseeker" ,element:<JobSeekerAppliedJobs/> }, 
   { path:"/findjobs/jobseeker" ,element:<JobSeekerFindJobs/> },
   { path:"/profiledetails/jobseeker" ,element:<JobSeekerProfileDetails/> },
+  {path:"/feedback/jobseeker",element:<FeedBackGenerationPage/>},
 
   {path:"/resumeupload/jobseeker",element:<UploadCVPage/>},
   {path:"/chat/jobseeker",element:<ChatPageJobSeeker/>},

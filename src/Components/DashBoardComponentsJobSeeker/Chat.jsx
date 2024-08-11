@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import axios from 'axios';
+import ReactMarkdown from 'react-markdown';
 import './ChatInterface.css';
 
 const ChatInterface = () => {
@@ -53,7 +54,7 @@ const ChatInterface = () => {
         <div className="chat-messages">
           {chatMessages.map((msg, index) => (
             <div key={index} className={`message ${msg.type}`}>
-              {msg.content}
+              <ReactMarkdown>{msg.content}</ReactMarkdown>
             </div>
           ))}
         </div>

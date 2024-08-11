@@ -159,7 +159,6 @@ const FindJob = () => {
       const allLowJobIds = parseJobIds(lowResponse.data.result);
       const highJobIds = parseJobIds(highResponse.data.result);
 
-
       // Remove high chance job IDs from low chance job IDs
       const lowJobIds = allLowJobIds.filter(id => !highJobIds.includes(id));
       console.log("Low chance job IDs:", lowJobIds);
