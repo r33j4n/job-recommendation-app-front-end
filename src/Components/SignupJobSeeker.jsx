@@ -8,14 +8,25 @@ import './SignupJobSeeker.css';
 import SignUpImage from "../Resources/Images/Personal site-amico.png";
 
 const SignUpJobSeekerComponent = () => {
+  const securityQuestions = [
+    'What is your mother\'s maiden name?',
+    'What was the name of your first pet?',
+    'What was the name of your first school?',
+    'What is your favorite book?',
+    'In what city were you born?'
+  ];
+
   const [formData, setFormData] = useState({
     firstName: '',
     lastName: '',
     email: '',
     password: '',
     confirmPassword: '',
-    userName: ''
+    userName: '',
+    securityQuestion: '',
+    securityAnswer: ''
   });
+
   const [error, setError] = useState({
     email: '',
     password: '',
@@ -176,6 +187,25 @@ const SignUpJobSeekerComponent = () => {
             required
           />
           {error.confirmPassword && <p className="error-message">{error.confirmPassword}</p>}
+          <select
+            name="securityQuestion"
+            value={formData.securityQuestion}
+            onChange={handleChange}
+            required
+          >
+            <option value="">Select a security question</option>
+            {securityQuestions.map((question, index) => (
+              <option key={index} value={question}>{question}</option>
+            ))}
+          </select>
+          <input
+            type="text"
+            name="securityAnswer"
+            placeholder="Security Answer"
+            value={formData.securityAnswer}
+            onChange={handleChange}
+            required
+          />
           <button type="submit" className="signup-button">SIGN UP</button>
         </form>
         {error.general && <p className="error-message">{error.general}</p>}

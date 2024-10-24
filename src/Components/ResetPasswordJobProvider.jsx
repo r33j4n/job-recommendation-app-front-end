@@ -1,17 +1,16 @@
-// ResetPassword.js
-import React, { useState, useEffect } from 'react';
+// ResetPasswordJP.js
+import React, { useState } from 'react';
 import axios from 'axios';
-import { useLocation } from 'react-router-dom';
-import { useNavigate ,} from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import './ResetPasswordJobSeeker.css';
 
 const ResetPasswordJP = () => {
   const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
   const location = useLocation();
   const navigate = useNavigate();
-
 
   const validatePassword = (pwd) => {
     const regex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
@@ -24,8 +23,13 @@ const ResetPasswordJP = () => {
       return;
     }
 
+    if (password !== confirmPassword) {
+      setError('Passwords do not match.');
+      return;
+    }
+
     const token = new URLSearchParams(location.search).get('token');
-    
+
     try {
       const response = await axios.post('http://localhost:8081/jobprovider/reset-password', {
         token,
@@ -35,7 +39,9 @@ const ResetPasswordJP = () => {
       if (response.status === 200) {
         setSuccess('Password reset successfully!');
         setError('');
-        navigate('/login/jobProvider');
+        setTimeout(() => {
+          navigate('/login/jobProvider');
+        }, 2000);
       } else {
         throw new Error('Failed to reset password');
       }
@@ -45,17 +51,12 @@ const ResetPasswordJP = () => {
     }
   };
 
-  const handlehome = async () => {
-        navigate('/home');
-  };
-
   return (
     <div className="reset-password-container">
       <div className="reset-password-content">
-        <h1>Stay Calm</h1>
-        <h2>Forgot your password? Don't worry, we've got you covered.</h2>
+        <h1>Reset Password</h1>
         <div className="input-group">
-          <label htmlFor="password">Type your new password</label>
+          <label htmlFor="password">New Password</label>
           <input
             type="password"
             id="password"
@@ -64,10 +65,19 @@ const ResetPasswordJP = () => {
             placeholder="Enter new password"
           />
         </div>
+        <div className="input-group">
+          <label htmlFor="confirmPassword">Confirm New Password</label>
+          <input
+            type="password"
+            id="confirmPassword"
+            value={confirmPassword}
+            onChange={(e) => setConfirmPassword(e.target.value)}
+            placeholder="Confirm new password"
+          />
+        </div>
         <button onClick={handleReset}>Reset Password</button>
-        <button onClick={handlehome}>Go to Home Page</button>
-        {error && <p className="error">{error}</p>}
-        {success && <p className="success">{success}</p>}
+        {error && <p className="error-message">{error}</p>}
+        {success && <p className="success-message">{success}</p>}
       </div>
     </div>
   );

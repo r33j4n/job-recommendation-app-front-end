@@ -25,7 +25,7 @@ const ResetPassword = () => {
     }
 
     const token = new URLSearchParams(location.search).get('token');
-    
+
     try {
       const response = await axios.post('http://localhost:8081/jobseeker/reset-password', {
         token,
@@ -44,31 +44,31 @@ const ResetPassword = () => {
       setSuccess('');
     }
   };
+
   const handlehome = async () => {
     navigate('/home');
 };
 
   return (
     <div className="reset-password-container">
-      <div className="reset-password-content">
-        <h1>Stay Calm</h1>
-        <h2>Forgot your password? Don't worry, we've got you covered.</h2>
-        <div className="input-group">
-          <label htmlFor="password">Type your new password</label>
-          <input
-            type="password"
-            id="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            placeholder="Enter new password"
-          />
-        </div>
-        <button onClick={handleReset}>Reset Password</button>
-        <button onClick={handlehome}>Go to Home Page</button>
-        {error && <p className="error">{error}</p>}
-        {success && <p className="success">{success}</p>}
+    <div className="reset-password-content">
+      <h1>Stay Calm</h1>
+      <h2>Forgot your password? Don't worry, we've got you covered.</h2>
+      <div className="input-group">
+        <label htmlFor="password">Type your new password</label>
+        <input
+          type="password"
+          id="password"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          placeholder="Enter new password"
+        />
       </div>
+      <button onClick={handleReset}>Reset Password</button>
+      {error && <p className="error-message">{error}</p>}
+      {success && <p className="success-message">{success}</p>}
     </div>
+  </div>
   );
 };
 
